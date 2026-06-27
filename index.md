@@ -381,7 +381,7 @@ This is a quick one-liner to install all needed packages.
 Please look at the individual sections for details.
 Skip this if this is your first Chimera Linux instalaltion
 ```
-apk add nvme-cli parted cryptsetup-scripts btrfs-progs dosfstools xfsprogs e2fsprogs ntfs-3g f2fs-tools mdadm lvm2 networkmanager linux-lts linux-stable grub-x86_64-efi plasma-desktop openssh-dinit fastfetch flatpak smartmontools curl git ufw lynx neomutt chromium firefox thunderbird libreoffice bash bash-completion fish-shell zsh tmux btop qemu-guest-agent-dinit spice-vdagent-dinit
+apk add nvme-cli parted cryptsetup-scripts btrfs-progs dosfstools xfsprogs e2fsprogs ntfs-3g f2fs-tools mdadm lvm2 networkmanager linux-lts linux-stable grub-x86_64-efi plasma-desktop openssh-dinit flatpak smartmontools ufw chromium firefox thunderbird libreoffice git btop fastfetch curl lynx neomutt vim bash bash-completion fish-shell zsh tmux btop qemu-guest-agent-dinit spice-vdagent-dinit
 ```
 
 ##### Install NetworkManager
@@ -454,6 +454,7 @@ apk add zsh
 ##### Install File Sytem tools
 
 ```
+apk add smartmontools
 apk add nvme-cli
 apk add parted
 apk add cryptsetup-scripts
