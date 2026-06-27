@@ -47,7 +47,7 @@ After the system is booted we start with the actual Installation.
 
 ### What to install?
 
-Bootstrapping Chimera Linux is very simmilar to bootsrapping ARCH or Debian
+Bootstrapping Chimera Linux is very similar to bootsrapping ARCH or Debian
 
 ### Prepare the Installation Environment
 
