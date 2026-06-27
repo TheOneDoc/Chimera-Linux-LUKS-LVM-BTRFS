@@ -11,7 +11,7 @@ Note: The configuration and usage of Snapper is out of scope for this document.
 
 ## Target System
 
-In this example our target system is a GMKtec NicBox K11 running 
+In this example our target system is a GMKtec NucBox K11 Mini-PC running 
 - CPU AMD Ryzen™ 9 8945HS 8 Cores 16 Threads 
 - Ram 32 GB
 - Drive 2TB
