@@ -24,21 +24,19 @@ Please utilize the official [Chimera Linux Documentation](https://chimera-linux.
 
 ## Preparation
 
-We use an Official Gentoo Linux [mirror](https://en.wikipedia.org/wiki/Mirror_site) throughout this installation.
-Please find one near you via [Gentoo Source Mirrors](https://www.gentoo.org/downloads/mirrors/)
 
-```
-#Name               Protocol    IPv4/v6	    URL
-#Ionos SE (1&1)     https       IPv4 + IPv6 https://eu.mirror.ionos.com//linux/distributions/gentoo/gentoo/
-#Ionos SE (1&1)     rsync       IPv4 + IPv6 rsync://eu.mirror.ionos.com/gentoo/
-```
-
-the current Gentoo [LiveGUI USB Image](https://www-cdn.gentoo.org/downloads/amd64/) is our installation environment.
+the current official Chimera Linux [Plasma KDE live Image](https://repo.chimera-linux.org/live/latest/) is our installation environment.
 
 Please adjust the following URL accordingly as the one in this guide is current as of writing.
 ```
-https://eu.mirror.ionos.com//linux/distributions/gentoo/gentoo/releases/amd64/autobuilds/current-livegui-amd64/livegui-amd64-20260510T170106Z.iso
+https://repo.chimera-linux.org/live/latest/chimera-linux-x86_64-LIVE-20251220-plasma.iso
 ```
+Important: I provide more frequently updated Chimera Live Images for AMD64/x86_64 and AARCH64 [here](https://c.1und1.de/@1632165589407503469/fVfz_5G2xzpIEFlMtFCZVQ)
+
+This images come with aditional packages pre-installed and this guide assumes that my plasmakvm image is used
+
+Please see [This Fediverse post](https://tech.lgbt/@TheOneDoc/116505561647485255) for the current state of the images.
+
 Now it's time to boot our machine/VM from the installation environment.
 
 After the system is booted we start with the actual Installation.
@@ -47,44 +45,34 @@ After the system is booted we start with the actual Installation.
 
 ### What to install?
 
-Bootstrapping Gentoo is a bit different than other Linux Distributions in so far as it uses a multitude of [Stage Files](https://wiki.gentoo.org/wiki/Stage_file) instead of a single small
-base system tarball.
-
-We make use of the current stage-3 desktop openrc stage file.
-
-Please adjust this URL according to your needs and the latest stage file.
-
-Note: In the context of Gentoo Linux __"current"__ references the rolling release and __"stable"__ the milestone release.
-
-In this guide we will follow __current__.
-
-```
-https://eu.mirror.ionos.com/linux/distributions/gentoo/gentoo/releases/amd64/autobuilds/current-stage3-amd64-desktop-openrc/stage3-amd64-desktop-openrc-20260614T170130Z.tar.xz
-```
+Bootstrapping Chimera Linux is very simmilar to bootsrapping ARCH or Debian
 
 ### Prepare the Installation Environment
 
-As long as we are in our Installation Environment we will use the [__sudo__](https://en.wikipedia.org/wiki/Sudo) command to execute tasks with superuser (root) privileges.
-
-However within the chroot and our newly installed system we will use [__doas__](https://en.wikipedia.org/wiki/Doas).
-
-__sudo -i__ ≈ __doas -s__
+Chimera Linux defaults to the [__doas__](https://en.wikipedia.org/wiki/Doas) command to execute tasks with superuser (root) privileges.
 
 #### Open the __Console__ by starting [__Konsole__](https://en.wikipedia.org/wiki/Konsole)
 
-#### Set root password and create our install user
+#### Change root password and create our install user
+Chimera Linux Live Images come pre-configured wth two useres.
+
+the ```root``` user with the default password ```chimera```
+and the ```anon``` user with the default password ```chimera```. 
+```anon``` is a member of the group ```wheel``` and can perform tasks as superuser via the ```doas``` command
+
 ```
-sudo -i
+doas -s
 passwd
 useradd -m -G users,wheel uwe
 passwd uwe
 su - uwe
 ```
 ![](0001.png)
+
 #### (optional) start sshd
 This step can be skipped if the installation is done locally
 ```
-sudo rc-service sshd start
+doas dinitctl enable sshd
 ```
 #### (optional) get the IP Address of our Install Environment
 ```
@@ -97,7 +85,7 @@ At this point you can either continue the installation locally or ssh into the I
 All the following steps need to be performed with superuser (root) privileges
 
 ```
-sudo -i
+doas -s
 ```
 ![](0003.png)
 
