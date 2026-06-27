@@ -11,10 +11,10 @@ Note: The configuration and usage of Snapper is out of scope for this document.
 
 ## Target System
 
-In this example our target system is a [QEMU](https://en.wikipedia.org/wiki/QEMU)/[KVM](https://en.wikipedia.org/wiki/Kernel-based_Virtual_Machine) [Virtual Machine](https://en.wikipedia.org/wiki/Virtual_machine) running 
-- CPU x86-64-v3, 8 Cores 16 Threads 
-- Ram 16 GB
-- Drive 200GB
+In this example our target system is a GMKtec NicBox K11 running 
+- CPU AMD Ryzen™ 9 8945HS 8 Cores 16 Threads 
+- Ram 32 GB
+- Drive 1TB
 - booted via [Unified Extensible Firmware Interface](https://en.wikipedia.org/wiki/UEFI) (UEFI)
 - System Language EN/DE
 
@@ -88,6 +88,20 @@ All the following steps need to be performed with superuser (root) privileges
 doas -s
 ```
 ![](0003.png)
+
+### (optional)
+If you use the official Chimera Live Image you now have to update, make the users repository available and install some tools
+
+```
+doas -s
+apk update
+apk upgrade --latest
+apk add chimera-repo-user
+apk update
+apk upgrade --latest
+apk add parted nvme-cli tmux
+```
+![](0003-1.png)
 
 ### prepare Installation target
 
