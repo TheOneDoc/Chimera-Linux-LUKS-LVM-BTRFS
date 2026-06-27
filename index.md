@@ -370,15 +370,19 @@ BACKSPACE=guess
 EOF
 ```
 
+#### Service configuration
+
 Now is a good moment to read up on Chimera Linux' [Package Management](https://chimera-linux.org/docs/apk) and [Service Management](https://chimera-linux.org/docs/configuration/services)
 
 
-This is a quick one-liner to install all needed packages.
-Please look at the individual sections for details
-```
-apk add linux-lts linux-latest grub-x86_64-efi plasma-desktop flatpak smartmontools ufw firefox thunderbird networkmanager bash bash-completion fish-shell qemu-guest-agent-dinit spice-vdagent-dinit
-```
+##### (optional) quick install
 
+This is a quick one-liner to install all needed packages.
+Please look at the individual sections for details.
+Skip this if this is your first Chimera Linux instalaltion
+```
+apk add nvme-cli parted cryptsetup-scripts btrfs-progs dosfstools xfsprogs e2fsprogs ntfs-3g f2fs-tools mdadm lvm2 networkmanager linux-lts linux-stable grub-x86_64-efi plasma-desktop openssh-dinit fastfetch flatpak smartmontools curl git ufw lynx neomutt chromium firefox thunderbird libreoffice bash bash-completion fish-shell zsh tmux btop qemu-guest-agent-dinit spice-vdagent-dinit
+```
 
 ##### Install NetworkManager
 We use Network Manager for Network device configuration
@@ -399,58 +403,72 @@ dinitctl enable -o syslog-ng
 ```
 dinitctl enable -o sshd
 ```
-
-##### Install File indexing
+##### Install Firewall
+```
+apk add ufw
+dinitctl enable -o ufw
+ufw allow ssh
+```
+We can see the firewall status via
 
 ```
-emerge --ask sys-apps/mlocate
+ufw status
 ```
 
-##### Install bash completion
+##### Install and configure flatpak
 
 ```
-emerge --ask app-shells/bash-completion
+apk add flatpak
+flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 ```
 
-##### Install gentoolkit
+##### Install shells
+
+Install your prefered shell and don't forget to enable it for your user e.g.
 
 ```
-emerge --ask app-portage/gentoolkit
+chsh -s /bin/bash uwe
+```
+
+tmux
+```
+apk add tmux
+```
+
+bash
+```
+apk add bash bash-completion
+```
+
+fish
+
+```
+apk add fish-shell
+```
+zsh
+
+```
+apk add zsh
 ```
 
 ##### Install File Sytem tools
 
 ```
-emerge --ask sys-fs/cryptsetup
-emerge --ask sys-fs/btrfs-progs
-emerge --ask sys-fs/dosfstools
-emerge --ask sys-fs/xfsprogs
-emerge --ask sys-fs/e2fsprogs
-emerge --ask sys-fs/ntfs3g
-emerge --ask sys-fs/f2fs-tools
-emerge --ask sys-fs/mdadm
-emerge --ask dev-python/zstandard
-emerge --ask sys-block/io-scheduler-udev-rules
-```
-
-##### Install the Logical Volume Manager
-
-Set the USAGE flag
-```
-cat << 'EOF' >> /etc/portage/package.use/lvm2
-#Enable support for the LVM daemon and related tools
-sys-fs/lvm2 lvm
-EOF
-```
-Install and enable LVM
-```
-emerge --ask sys-fs/lvm2
-rc-update add lvm boot
+apk add nvme-cli
+apk add parted
+apk add cryptsetup-scripts
+apk add btrfs-progs
+apk add dosfstools
+apk add xfsprogs
+apk add e2fsprogs
+apk add ntfs-3g
+apk add f2fs-tools
+apk add mdadm
+apk add lvm2
 ```
 
 ##### Build /etc/fstab
 ```
-emerge --ask sys-fs/genfstab
 genfstab -U / >> /etc/fstab
 ```
 check generated file
@@ -463,80 +481,48 @@ cat /etc/fstab
 Get the __UUID__ for the LUKS Container on ```/dev/nvme0n1p2```
 
 ```
-lsblk -o NAME,FSTYPE,UUID,TYPE,MOUNTPOINT,LABEL
+lsblk -o NAME,FSTYPE,UUID,TYPE,MOUNTPOINT,LABEL | grep LUKS
 ```
 ![](0022.png)
 
 Write ```/etc/crypttab```
 
 ```
-echo "crypt UUID=1e5b53d9-03d8-4545-803e-3cc69eeac52d none luks,discard" > /etc/crypttab
+echo "crypt UUID=3cb97459-3f26-4616-a617-85fcd0529642 none luks,discard" > /etc/crypttab
 ```
-##### Install Linux Firmware
-```
-emerge --ask sys-kernel/linux-firmware
-emerge --ask sys-firmware/sof-firmware
-```
+
 ##### Install the Linux Kernel
-Make sure that __ugrd__ and __grub__ are used by the kernel
 
+Chimera Linux provides the ```linux-lts``` and ```linux-stable``` Kernel packages
+we will install both and the GRUB 
 ```
-cat << 'EOF' >> /etc/portage/package.use/installkernel
-sys-kernel/installkernel -dracut ugrd grub
-EOF
-```
-Make sure that Grub uses the EFI
-```
-echo 'GRUB_PLATFORMS="efi-64"' >> /etc/portage/make.conf
-```
-make sure that external kmods get auto rebuild
-```
-echo 'USE="${USE} dist-kernel"' >> /etc/portage/make.conf
+apk add linux-lts
+apk add linux-stable
+update-initramfs -c -k all
 ```
 
-Misc config (not needed?)
-
+##### Install GRUB
 ```
-mkdir -p /etc/kernel
-echo "quiet splash" > /etc/kernel/cmdline
-mkdir -p /etc/cmdline.d
-ln -s /etc/kernel/cmdline /etc/cmdline.d/00-installkernel.conf
+apk add grub-x86_64-efi
+mount -o remount,rw /sys/firmware/efi/efivars
+grub-install -v --target=x86_64-efi --efi-directory=/boot
+update-grub
 ```
-
-Install the gentoo default kernel binary
-```
-emerge --ask sys-kernel/gentoo-kernel-bin
-```
-
-Installkernel can be re-emerged and will pull UGRD
-
-```
-emerge -ask sys-kernel/installkernel
-```
-
 ##### Install ZFS support
 
 ```
-emerge --ask sys-fs/zfs
-```
-To force an initramfs rebuild, emerge --config can be used on dist-kernel packages:
-```
-emerge --config sys-kernel/gentoo-kernel-bin
-```
-##### Install GRUB
-```
-emerge --ask sys-boot/grub
-grub-install --efi-directory=/boot
-grub-mkconfig -o /boot/grub/grub.cfg
-emerge sys-kernel/installkernel[grub]
+apk add zfs
 ```
 
 ##### Install some tools
 ```
-emerge dev-vcs/git
-emerge sys-process/btop
-emerge app-misc/fastfetch
-emerge app-misc/tmux
+apk add git
+apk add btop
+apk add fastfetch
+apk add curl
+apk add lynx
+apk add neomutt
+apk add vim
 ```
 
 ##### (optional) QEMU/KVM VM guest agent services
