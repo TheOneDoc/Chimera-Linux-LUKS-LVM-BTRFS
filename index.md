@@ -369,49 +369,35 @@ XKBOPTIONS=
 BACKSPACE=guess
 EOF
 ```
-![](0018.png)
+
+Now is a good moment to read up on Chimera Linux' [Package Management](https://chimera-linux.org/docs/apk) and [Service Management](https://chimera-linux.org/docs/configuration/services)
 
 
-##### Generate Machine ID
+This is a quick one-liner to install all needed packages.
+Please look at the individual sections for details
 ```
-dbus-uuidgen --ensure=/etc/machine-id
+apk add linux-lts linux-latest grub-x86_64-efi plasma-desktop flatpak smartmontools ufw firefox thunderbird networkmanager bash bash-completion fish-shell qemu-guest-agent-dinit spice-vdagent-dinit
 ```
 
 
 ##### Install NetworkManager
-
+We use Network Manager for Network device configuration
 ```
-echo 'USE="${USE} networkmanager"' >> /etc/portage/make.conf
-emerge --ask net-misc/networkmanager
-rc-update add NetworkManager default
-```
-
-##### Install syslog-ng
-
-```
-emerge --ask app-admin/syslog-ng
-emerge --ask app-admin/logrotate
-rc-update add syslog-ng default
+apk add networkmanager
+dinitctl enable -o networkmanager
 ```
 
-##### Install Cron
+##### Enable syslog-ng
+The default logging system on Chimera is syslog-ng, which is part of base-full. Enable the syslog daemon as follows
 
 ```
-emerge --ask sys-process/cronie
-rc-update add cronie default
-```
-
-##### Install NTP
-
-```
-emerge --ask net-misc/chrony
-rc-update add chronyd default
+dinitctl enable -o syslog-ng
 ```
 
 ##### Enable sshd
 
 ```
-rc-update add sshd default
+dinitctl enable -o sshd
 ```
 
 ##### Install File indexing
