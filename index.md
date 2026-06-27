@@ -217,7 +217,7 @@ mkfs.btrfs -f -L rootfs /dev/mapper/system-root
 
 Create the BTRFS Subvolumes
 ```
-mount -v -t btrfs -o ssd,compress=zstd:11,subvol=/ /dev/system/root /media/root
+mount -v -m -t btrfs -o ssd,compress=zstd:11,subvol=/ /dev/system/root /media/root
 btrfs subvolume create /media/root/@
 btrfs subvolume create /media/root/@home
 btrfs subvolume create /media/root/@root
