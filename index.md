@@ -90,7 +90,7 @@ doas -s
 ![](0003.png)
 
 ### (optional)
-If you use the official Chimera Live Image you now have to update, make the users repository available and install some tools
+If you use the official Chimera Live Image you now have to update, make the __users__ repository available and install some tools
 
 ```
 doas -s
