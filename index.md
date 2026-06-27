@@ -31,6 +31,8 @@ Please adjust the following URL accordingly as the one in this guide is current 
 ```
 https://repo.chimera-linux.org/live/latest/chimera-linux-x86_64-LIVE-20251220-plasma.iso
 ```
+For validation of the official image see [Chimera Linux Installation Documentation](https://chimera-linux.org/docs/installation)
+
 Important: I provide more frequently updated Chimera Live Images for AMD64/x86_64 and AARCH64 [here](https://c.1und1.de/@1632165589407503469/fVfz_5G2xzpIEFlMtFCZVQ)
 
 This images come with aditional packages pre-installed and this guide assumes that my plasmakvm image is used
@@ -349,67 +351,26 @@ Adjust accordingly.
 ```
 ln -sf /usr/share/zoneinfo/Europe/Berlin /etc/localtime
 ```
-
-##### Configure locales
-The locales are set to en_US (English, USA) and de_DE (German, Germany)
-
-Adjust accordingly.
-
-Configure /etc/local.gen
-```
-cat << 'EOF' > /etc/locale.gen
-en_US.UTF-8 UTF-8
-de_DE.UTF-8 UTF-8
-EOF
-```
-
-Generate locales
-```
-locale-gen
-```
-![](0019.png)
-
-Set the system default locale
-```
-eselect locale list
-eselect locale set 4
-```
-
-Reload session with the new local
-```
-env-update && source /etc/profile && export PS1="(chroot) ${PS1}"
-```
-![](0020.png)
-
 ##### Configure keymaps
 
 ```
-cat << 'EOF' > /etc/conf.d/keymaps
-# Use keymap to specify the default console keymap.  There is a complete tree
-# of keymaps in /usr/share/keymaps to choose from.
-keymap="de-latin1-nodeadkeys"
+cat << 'EOF' > /etc/default/keyboard
+# KEYBOARD CONFIGURATION FILE
 
-# Should we first load the 'windowkeys' console keymap?  Most x86 users will
-# say "yes" here.  Note that non-x86 users should leave it as "no".
-# Loading this keymap will enable VT switching (like ALT+Left/Right)
-# using the special windows keys on the linux console.
-windowkeys="YES"
+# Consult the keyboard(5) manual page.
 
-# The maps to load for extended keyboards.  Most users will leave this as is.
-extended_keymaps=""
-#extended_keymaps="backspace keypad euro2"
+KMAP=de
 
-# Tell dumpkeys(1) to interpret character action codes to be
-# from the specified character set.
-# This only matters if you set unicode="yes" in /etc/rc.conf.
-# For a list of valid sets, run `dumpkeys --help`
-dumpkeys_charset=""
+XKBMODEL=pc105
+XKBLAYOUT=de
+XKBVARIANT=nodeadkeys
+XKBOPTIONS=
 
-# Some fonts map AltGr-E to the currency symbol instead of the Euro.
-# To fix this, set to "yes"
-fix_euro="NO"
+BACKSPACE=guess
 EOF
 ```
+![](0018.png)
+
 
 ##### Generate Machine ID
 ```
