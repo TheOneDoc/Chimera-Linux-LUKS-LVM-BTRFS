@@ -27,6 +27,8 @@ Please utilize the official [Chimera Linux Documentation](https://chimera-linux.
 
 the current official Chimera Linux [Plasma KDE live Image](https://repo.chimera-linux.org/live/latest/) is our installation environment.
 
+![](0004.png)
+
 Please adjust the following URL accordingly as the one in this guide is current as of writing.
 ```
 https://repo.chimera-linux.org/live/latest/chimera-linux-x86_64-LIVE-20251220-plasma.iso
