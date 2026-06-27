@@ -105,7 +105,7 @@ apk add parted nvme-cli tmux
 
 ### prepare Installation target
 
-our target device is called __/dev/vda__ because it's a [virtio](https://wiki.osdev.org/Virtio) [block device](https://en.wikipedia.org/wiki/Device_file#Block_devices) other valid targets are
+our target device is called __/dev/nvme0n1__ because it's a [NVMe Express m.2 SSD](https://en.wikipedia.org/wiki/NVM_Express) [block device](https://en.wikipedia.org/wiki/Device_file#Block_devices) other valid targets are
 ```
 /dev/vd?
 /dev/sd?
@@ -119,7 +119,7 @@ Note: replace ? with the number/letter that specifies your target device
 ##### Wipe the device
 Remove all File system, RAID and Partition Table signatures from target device
 ```
-wipefs -a /dev/vda
+wipefs -a /dev/nvme0n1
 ```
 
 ##### (optional) secure erase the target drive
@@ -128,13 +128,11 @@ For NVME SSDs perform ```nvme sanitize /dev/nvme0 -a 0x02``` and for all other b
 
 Note: This operation can take a long time depending on size and speed of the target drive.
 
-For more on secure wipe consult the [Gentoo Handbook](https://wiki.gentoo.org/wiki/Secure_wipe)
-
 #### Partitioning the target device
 
 ##### Check that the target is indeed empty
 ```
-parted /dev/vda print
+parted /dev/nvme0n1 print
 ```
 ![](0004.png)
 
