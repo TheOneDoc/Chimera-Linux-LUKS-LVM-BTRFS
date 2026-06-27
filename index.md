@@ -57,7 +57,8 @@ Chimera Linux defaults to the [__doas__](https://en.wikipedia.org/wiki/Doas) com
 Chimera Linux Live Images come pre-configured wth two useres.
 
 the ```root``` user with the default password ```chimera```
-and the ```anon``` user with the default password ```chimera```. 
+and the ```anon``` user with the default password ```chimera```.
+
 ```anon``` is a member of the group ```wheel``` and can perform tasks as superuser via the ```doas``` command
 
 ```
