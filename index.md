@@ -125,7 +125,7 @@ wipefs -a /dev/nvme0n1
 
 ##### (optional) secure erase the target drive
 
-For NVME SSDs perform ```nvme sanitize /dev/nvme0 -a 0x02``` and for all other block devices perform ```blkdiscard -vfz /dev/vda```.
+For NVME SSDs perform ```nvme sanitize /dev/nvme0 -a 0x02``` and for all other block devices perform ```blkdiscard -vfz /dev/nvme0n1```.
 
 Note: This operation can take a long time depending on size and speed of the target drive.
 
@@ -139,33 +139,33 @@ parted /dev/nvme0n1 print
 
 ##### Create the Partition Table and Partitions
 ```
-parted /dev/vda mklabel gpt
-parted /dev/vda mkpart primary fat32 0% 2.5GB
-parted /dev/vda name 1 esp
-parted /dev/vda set 1 esp on
-parted /dev/vda set 1 boot on
-parted /dev/vda mkpart primary 2.5GB 100%
-parted /dev/vda name 2 LUKS-crypt
+parted /dev/nvme0n1 mklabel gpt
+parted /dev/nvme0n1 mkpart primary fat32 0% 2.5GB
+parted /dev/nvme0n1 name 1 esp
+parted /dev/nvme0n1 set 1 esp on
+parted /dev/nvme0n1 set 1 boot on
+parted /dev/nvme0n1 mkpart primary 2.5GB 100%
+parted /dev/nvme0n1 name 2 LUKS-crypt
 ```
 
 ##### Check that the target device is correctly partitioned
 ```
-parted /dev/vda print
+parted /dev/nvme0n1 print
 ```
 ![](0005.png)
 
 #### EFI File system creation
 ```
-mkfs.fat -F 32 -n EFI /dev/vda1
+mkfs.fat -F 32 -n EFI /dev/nvme0n1p1
 ```
 
 #### LUKS Partition creation
 ```
-cryptsetup luksFormat /dev/vda2
+cryptsetup luksFormat /dev/nvme0n1p2
 ```
 unlock the LUKS Container and map it to __/dev/mapper/crypt__
 ```
-cryptsetup luksOpen /dev/vda2 crypt
+cryptsetup luksOpen /dev/nvme0n1p2 crypt
 ```
 (optional) enable discards on __LUKS__
 
@@ -188,7 +188,7 @@ The first __LV__ contains our swap. We name it __swap__.
 
 A good size for it is RAM Size * 2.5
 ```
-lvcreate --name swap -L 40G system
+lvcreate --name swap -L 80G system
 ```
 The Second __LV__ contains our __BTRFS__ File System. We name it __root__. 
 ```
@@ -217,48 +217,48 @@ mkfs.btrfs -f -L rootfs /dev/mapper/system-root
 
 Create the BTRFS Subvolumes
 ```
-mount -v -t btrfs -o ssd,compress=zstd:11,subvol=/ /dev/system/root /mnt/gentoo
-btrfs subvolume create /mnt/gentoo/@
-btrfs subvolume create /mnt/gentoo/@home
-btrfs subvolume create /mnt/gentoo/@root
-btrfs subvolume create /mnt/gentoo/@var@log
-btrfs subvolume create /mnt/gentoo/@snapshots
-btrfs subvolume create /mnt/gentoo/@home/.snapshots
+mount -v -t btrfs -o ssd,compress=zstd:11,subvol=/ /dev/system/root /media/root
+btrfs subvolume create /media/root/@
+btrfs subvolume create /media/root/@home
+btrfs subvolume create /media/root/@root
+btrfs subvolume create /media/root/@var@log
+btrfs subvolume create /media/root/@snapshots
+btrfs subvolume create /media/root/@home/.snapshots
 ```
 ![](0010.png)
 
 check if all is done correctly
 ```
-btrfs subvolume list /mnt/gentoo
+btrfs subvolume list /media/root
 ```
 ![](0011.png)
 
 Set __@__ as the __default__ subvolume
 ```
-btrfs subvolume set-default /mnt/gentoo/@
+btrfs subvolume set-default /media/root/@
 ```
 check if it's set correctly
 ```
-btrfs subvolume get-default /mnt/gentoo
+btrfs subvolume get-default /media/root
 ```
 ![](0012.png)
 cleanup
 ```
-umount /mnt/gentoo
+umount /media/root
 ```
 #### Mount File systems for use in the chroot Environment
 ```
-mount -t btrfs -o compress=zstd:11,ssd,noatime,subvol=/@ /dev/system/root /mnt/gentoo
-chmod 755 /mnt/gentoo
-mount -m -t btrfs -o compress=zstd:11,ssd,noatime,subvol=/@root /dev/system/root /mnt/gentoo/root
-mount -m -t btrfs -o compress=zstd:11,ssd,noatime,subvol=/@var@log /dev/system/root /mnt/gentoo/var/log
-mount -m -t btrfs -o compress=zstd:11,ssd,noatime,subvol=/@snapshots /dev/system/root /mnt/gentoo/.snapshots
-mount -m -t btrfs -o compress=zstd:11,ssd,noatime,subvol=/@home /dev/system/root /mnt/gentoo/home
-mount -m -t vfat /dev/vda1 /mnt/gentoo/boot
+mount -t btrfs -o compress=zstd:11,ssd,noatime,subvol=/@ /dev/system/root /media/root
+chmod 755 /media/root
+mount -m -t btrfs -o compress=zstd:11,ssd,noatime,subvol=/@root /dev/system/root /media/root/root
+mount -m -t btrfs -o compress=zstd:11,ssd,noatime,subvol=/@var@log /dev/system/root /media/root/var/log
+mount -m -t btrfs -o compress=zstd:11,ssd,noatime,subvol=/@snapshots /dev/system/root /media/root/.snapshots
+mount -m -t btrfs -o compress=zstd:11,ssd,noatime,subvol=/@home /dev/system/root /media/root/home
+mount -m -t vfat /dev/nvme0n1p1 /media/root/boot
 ```
 check if everything is mounted in the right place
 ```
-findmnt -R /mnt/gentoo
+findmnt -R /media/root
 ```
 ![](0013.png)
 
@@ -268,16 +268,16 @@ Consult the [Gentoo Handbook](https://wiki.gentoo.org/wiki/Handbook:AMD64/Instal
 
 Reminder: Make sure you use the correct URL for your chosen mirror and stage file.
 ```
-cd /mnt/gentoo
+cd /media/root
 curl -O https://eu.mirror.ionos.com/linux/distributions/gentoo/gentoo/releases/amd64/autobuilds/current-stage3-amd64-desktop-openrc/stage3-amd64-desktop-openrc-20260614T170130Z.tar.xz
-tar xpf stage3-*.tar.xz --xattrs-include='*.*' --numeric-owner -C /mnt/gentoo
+tar xpf stage3-*.tar.xz --xattrs-include='*.*' --numeric-owner -C /media/root
 ```
 ![](0014.png)
 
 ### Copy DNS setting from the Install Environment to the chroot
 
 ```
-cp --dereference /etc/resolv.conf /mnt/gentoo/etc/
+cp --dereference /etc/resolv.conf /media/root/etc/
 ```
 
 ### Put a sane __make.conf__ in place
@@ -314,7 +314,7 @@ EOF
 ### chroot into the new Gentoo Installation
 
 ```
-sudo arch-chroot /mnt/gentoo
+sudo arch-chroot /media/root
 source /etc/profile
 export PS1="(chroot) ${PS1}"
 ```
@@ -659,7 +659,7 @@ cat /etc/fstab
 ![](0021.png)
 
 ##### Build ```/etc/crypttab```
-Get the __UUID__ for the LUKS Container on ```/dev/vda2```
+Get the __UUID__ for the LUKS Container on ```/dev/nvme0n1p2```
 
 ```
 lsblk -o NAME,FSTYPE,UUID,TYPE,MOUNTPOINT,LABEL
@@ -811,8 +811,3 @@ And reboot the machine
 sudo reboot
 ```
 ![The End Result](0023.png)
-
-
-</domain>
-
-```
