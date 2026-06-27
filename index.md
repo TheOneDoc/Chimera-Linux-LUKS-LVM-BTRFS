@@ -274,53 +274,14 @@ chimera-bootstrap /media/root
 ```
 ![](0014.png)
 
-### Copy DNS setting from the Install Environment to the chroot
+### chroot into the new Chimera Linux Installation
 
 ```
-cp --dereference /etc/resolv.conf /media/root/etc/
-```
-
-### Put a sane __make.conf__ in place
-This __/etc/portage/make.conf__ file is set up for
-a 8 Cores 16 Threads x86-64-3 system with 32 GB of RAM
-Note: Don't forget to set __Gentoo_Mirrors=__ to your local mirror
-
-```
-cat << 'EOF' >  /etc/portage/make.conf
-# Please consult /usr/share/portage/config/make.conf.example for a more
-# detailed example.
-COMMON_FLAGS="-march=x86-64-v3 -O2 -pipe"
-CFLAGS="${COMMON_FLAGS}"
-CXXFLAGS="${COMMON_FLAGS}"
-FCFLAGS="${COMMON_FLAGS}"
-FFLAGS="${COMMON_FLAGS}"
-RUSTFLAGS="${RUSTFLAGS} -C target-cpu=x86-64-v3"
-#conf for 8c/16t with 32 GB RAM
-MAKEOPTS="-j8 -l17"
-
-# NOTE: This stage was built with the bindist USE flag enabled
-
-# This sets the language of build output to English.
-# Please keep this setting intact when reporting bugs.
-LC_MESSAGES=C.UTF-8
-
-GENTOO_MIRRORS="https://eu.mirror.ionos.com/linux/distributions/gentoo/gentoo/"
-#Tell thesystem we want to run current switch to "AMD64" for stable
-ACCEPT_KEYWORDS="~amd64"
-
-EOF
-```
-
-### chroot into the new Gentoo Installation
-
-```
-sudo arch-chroot /media/root
-source /etc/profile
-export PS1="(chroot) ${PS1}"
+doas chimera-chroot /media/root
+export PS1="(chroot) \u@\h:\W # "
 ```
 ![](0015.png)
 
-Consult the [Gentoo Handbook](https://wiki.gentoo.org/wiki/Handbook:AMD64/Installation/Base) about Installing the Gentoo base system
 
 #### Check mounts
 
@@ -332,138 +293,38 @@ Note: UUIDs device names and size can differ.
 ![](0016.png)
 
 
-#### Sync up Gentoo Linux
+#### Update Chimera Linux
+
+##### (Optional) Set the path to a chimera mirror
+
+If no Mirror is specified the default Repository will be used
+
 ```
-emerge-webrsync
+mkdir -p /etc/apk/repositories.d
+```
+
+```
+cat << 'EOF' > /etc/apk/repositories.d/00-my-local-repo.list
+#This is the default
+#set CHIMERA_REPO_URL=https://repo.chimera-linux.org
+#Path to the Chimera Repo local mirror directory on this machine
+set CHIMERA_REPO_URL=http://chimeramirror.fritz.box
+EOF
+```
+##### Update the Installation and configure the users Repositor
+
+In case of errors run ```apk fix```.
+
+```
+apk update
+apk upgrade
+apk add chimera-repo-user
+apk update
+apk upgrade --available
 ```
 ![](0017.png)
 
-Important: ```emerge-webrsync``` overwrites ```/etc/portage/make.conf``` as of the time this document was written.
-Make sure to rerun [Put a sane __make.conf__ in place](#put-a-sane-makeconf-in-place)
 
-#### Configure Repositories
-
-##### Configure the rsync mirror
-```
-mkdir /etc/portage/repos.conf
-cat /usr/share/portage/config/repos.conf | sed 's|rsync://rsync.gentoo.org/gentoo-portage|rsync://eu.mirror.ionos.com/gentoo-portage|g' > /etc/portage/repos.conf/gentoo.conf
-```
-##### Configure the binary package host mirror
-
-```
-mkdir -p /etc/portage/binrepos.conf
-cat << 'EOF' > /etc/portage/binrepos.conf/gentoo.conf
-[gentoo]
-priority = 9959
-# NOTE: Must adjust <arch> and <variant> as appropriate!
-# sync-uri = https://distfiles.gentoo.org/releases/<arch>/binpackages/<variant>
-# x86-64 example sync-uri
-sync-uri = https://eu.mirror.ionos.com//linux/distributions/gentoo/gentoo/releases/amd64/binpackages/23.0/x86-64/
-
-# Introduced in portage-3.0.74 for per-repo verification choices
-verify-signature = true
-# Default value with >=portage-3.0.77
-location = /var/cache/binhost/gentoo
-
-[gentoo-x86-64-v3]
-priority = 9999
-sync-uri = https://eu.mirror.ionos.com//linux/distributions/gentoo/gentoo/releases/amd64/binpackages/23.0/x86-64-v3/
-# Introduced in portage-3.0.74 for per-repo verification choices
-verify-signature = true
-# Default value with >=portage-3.0.77
-location = /var/cache/binhost/gentoo-x86-64-v3
-EOF
-```
-##### Configure portage to use binary packages
-
-```
-cat <<EOF >> /etc/portage/make.conf
-# Appending getbinpkg to the list of values within the EMERGE_DEFAULT_OPTS variable
-EMERGE_DEFAULT_OPTS="${EMERGE_DEFAULT_OPTS} --getbinpkg"
-BINPKG_FORMAT="gpkg"
-USE="${USE} bindist"
-EOF
-```
-Generate the package signing keyring
-```
-getuto
-```
-
-##### Sync up Gentoo Linux
-```
-emerge --sync
-```
-
-##### Set the System Profile
-
-Set the default/linux/amd64/23.0/desktop/plasma (stable) Profile
-
-```
-eselect profile list
-eselect profile set 7
-```
-![](0018.png)
-
-```
-#we don't do that to not mess with binhost packages
-#emerge --ask --oneshot app-portage/cpuid2cpuflags
-#echo "*/* $(cpuid2cpuflags)" > /etc/portage/package.use/00cpu-flags
-```
-
-##### Set the GPU
-
-The most commonly used GPUs are
-- virgl, QEMU/KVM virtio GPU 
-- d3d12, WSL2 virtual Windows GPU
-- amdgpu radeonsi, AMD GPUs
-- intel, iGPUs/dGPUs
-- nouveau, NVidia GPUs (free) 
-- nvidia, NVidia GPUs (proprietary)
-
-```
-echo "*/* VIDEO_CARDS: -* virgl" > /etc/portage/package.use/00video_cards
-```
-
-##### Set the acceptable licenses
-```
-echo 'ACCEPT_LICENSE="-* @FREE @BINARY-REDISTRIBUTABLE"' >> /etc/portage/make.conf
-```
-
-##### Set use flags
-
-```
-echo 'USE="${USE} elogind -systemd wayland kde plasma sddm pipewire pulseaudio udev elogind dbus policykit bluetooth networkmanager opengl vulkan qt6"' >> /etc/portage/make.conf
-```
-
-##### Updating the __@world__ set
-```
-emerge --ask --verbose --update --deep --newuse --getbinpkg @world
-```
-
-##### emerge news
-Portage may output informational messages similar to the following:
-
-```
-* IMPORTANT: 22 news items need reading for repository 'gentoo'.
-* Use eselect news to read news items.
-```
-
-News items were created to provide a communication medium to push critical messages to users via the Gentoo ebuild repository. 
-To manage them, use ```eselect news```.
-The eselect application is a Gentoo-specific utility that allows for a common management interface for system administration.
-In this case, eselect is asked to use its news module.
-
-For the news module, three operations are most used:
-
-- With ```eselect news list``` an overview of the available news items is displayed.
-- With ```eselect news read``` the news items can be read.
-- With ```eselect news purge``` news items can be removed once they have been read and will not be reread anymore.
-
-##### Clean Up 
-```
-emerge --ask --pretend --depclean
-emerge --ask --depclean
-```
 ##### User Configuration
 
 Set root user account password
@@ -472,17 +333,8 @@ passwd root
 ```
 Create main user account and set password
 ```
-useradd -m -G wheel,kvm,users,audio -s /bin/bash uwe
+useradd -m -G wheel,kvm,users,plugdev -s /bin/sh uwe
 passwd uwe
-```
-
-###### Install and configure Doas
-
-```
-emerge --ask app-admin/doas
-echo "permit persist :wheel" > /etc/doas.conf
-chown -c root:root /etc/doas.conf
-chmod -c 0400 /etc/doas.conf
 ```
 
 ##### Set the hostname
@@ -493,7 +345,7 @@ The Timezone is set to CET
 
 Adjust accordingly.
 ```
-ln -sf ../usr/share/zoneinfo/Europe/Berlin /etc/localtime
+ln -sf /usr/share/zoneinfo/Europe/Berlin /etc/localtime
 ```
 
 ##### Configure locales
