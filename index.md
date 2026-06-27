@@ -528,67 +528,23 @@ apk add vim
 
 ##### (optional) QEMU/KVM VM guest agent services
 ```
-emerge --ask app-emulation/spice-vdagent
-emerge --ask app-emulation/qemu-guest-agent
-rc-update add spice-vdagent default
-rc-service spice-vdagent start
-rc-update add qemu-guest-agent default
-rc-service qemu-guest-agent start
+apk add qemu-guest-agent-dinit spice-vdagent-dinit
+dinitctl enable -o spice-vdagentd
+dinitctl enable -o qemu-ga
 ```
 
 ##### Install KDE
 ```
-emerge --ask kde-plasma/plasma-meta kde-apps/kde-apps-meta
-emerge --ask gui-libs/display-manager-init
+apk add plasma-desktop
+dinitctl enable -o sddm
 ```
 
-##### Update __@world__ set
-```
-emerge --ask --verbose --update --deep --changed-use @world
-```
-###### enable __elogind__
-```
-rc-update add elogind boot
-```
-##### Install __SDDM__
+##### Install Essential software 
 
 ```
-emerge --ask x11-misc/sddm
-emerge --ask kde-plasma/sddm-kcm
-
-usermod -a -G video sddm
-cat << 'EOF' > /etc/conf.d/display-manager
-CHECKVT=7
-DISPLAYMANAGER="sddm"
-EOF
-
-cat << 'EOF' > /etc/sddm.conf
-[Users]
-MaximumUid=60000
-MinimumUid=1000
-EOF
-
-rc-update add display-manager default
-rc-service display-manager start
+apk add chromium firefox thunderbird libreoffice
 ```
 
-##### Enable __seatd__
-```
-echo "sys-auth/seatd server" > /etc/portage/package.use/seatd
-emerge sys-auth/seatd
-rc-update add seatd default
-rc-service seatd start
-usermod -aG seat sddm
-usermod -aG seat uwe
-```
-
-
-##### Cleanup
-```
-eclean-dist
-eclean-pkg
-rm /stage3-*.tar.*
-```
 All done time to exit the chrot
 ```
 exit
@@ -596,6 +552,6 @@ exit
 
 And reboot the machine
 ```
-sudo reboot
+doas reboot
 ```
 ![The End Result](0023.png)
