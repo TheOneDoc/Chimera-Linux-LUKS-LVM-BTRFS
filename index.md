@@ -262,15 +262,15 @@ findmnt -R /media/root
 ```
 ![](0013.png)
 
-### Bootstrap Gentoo Linux
+### Bootstrap Chimera Linux
 
-Consult the [Gentoo Handbook](https://wiki.gentoo.org/wiki/Handbook:AMD64/Installation/Stage) for validation steps and in depth explanations.
+Chimera Linux's ```chimera-bootstrap``` per default installs the ```base-full``` package from the official repository into the traget directory.
 
-Reminder: Make sure you use the correct URL for your chosen mirror and stage file.
+This is the safest option and the only one covered in this guide.
+
 ```
-cd /media/root
-curl -O https://eu.mirror.ionos.com/linux/distributions/gentoo/gentoo/releases/amd64/autobuilds/current-stage3-amd64-desktop-openrc/stage3-amd64-desktop-openrc-20260614T170130Z.tar.xz
-tar xpf stage3-*.tar.xz --xattrs-include='*.*' --numeric-owner -C /media/root
+cd
+chimera-bootstrap /media/root
 ```
 ![](0014.png)
 
