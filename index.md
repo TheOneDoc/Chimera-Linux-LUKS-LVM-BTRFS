@@ -14,7 +14,7 @@ Note: The configuration and usage of Snapper is out of scope for this document.
 In this example our target system is a GMKtec NicBox K11 running 
 - CPU AMD Ryzen™ 9 8945HS 8 Cores 16 Threads 
 - Ram 32 GB
-- Drive 1TB
+- Drive 2TB
 - booted via [Unified Extensible Firmware Interface](https://en.wikipedia.org/wiki/UEFI) (UEFI)
 - System Language EN/DE
 
