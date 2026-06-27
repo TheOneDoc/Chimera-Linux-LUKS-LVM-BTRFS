@@ -311,7 +311,7 @@ cat << 'EOF' > /etc/apk/repositories.d/00-my-local-repo.list
 set CHIMERA_REPO_URL=http://chimeramirror.fritz.box
 EOF
 ```
-##### Update the Installation and configure the users Repositor
+##### Update the Installation and configure the users Repository
 
 In case of errors run ```apk fix```.
 
@@ -338,7 +338,9 @@ passwd uwe
 ```
 
 ##### Set the hostname
+```
 echo myhostname > /etc/hostname
+```
 
 ##### Set the Timezone
 The Timezone is set to CET
