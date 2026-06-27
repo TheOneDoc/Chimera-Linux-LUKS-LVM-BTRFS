@@ -35,9 +35,9 @@ https://repo.chimera-linux.org/live/latest/chimera-linux-x86_64-LIVE-20251220-pl
 ```
 For validation of the official image see [Chimera Linux Installation Documentation](https://chimera-linux.org/docs/installation)
 
-Important: I provide more frequently updated Chimera Live Images for AMD64/x86_64 and AARCH64 [here](https://c.1und1.de/@1632165589407503469/fVfz_5G2xzpIEFlMtFCZVQ)
+Note: I provide more frequently updated Chimera Live Images for AMD64/x86_64 and AARCH64 [here](https://c.1und1.de/@1632165589407503469/fVfz_5G2xzpIEFlMtFCZVQ)
 
-This images come with aditional packages pre-installed and this guide assumes that my plasmakvm image is used
+This images come with aditional packages pre-installed.
 
 Please see [This Fediverse post](https://tech.lgbt/@TheOneDoc/116505561647485255) for the current state of the images.
 
