@@ -41,6 +41,8 @@ This images come with aditional packages pre-installed.
 
 Please see [This Fediverse post](https://tech.lgbt/@TheOneDoc/116505561647485255) for the current state of the images.
 
+![](Docs%20Chimera%20Live%20latest.png)
+
 Now it's time to boot our machine/VM from the installation environment.
 
 After the system is booted we start with the actual Installation.
