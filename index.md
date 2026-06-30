@@ -19,8 +19,7 @@ In this example our target system is a GMKtec NucBox K11 Mini-PC running
 - System Language EN/DE
 
 You have to adjust accordingly for your own needs.
-Please utilize the official [Chimera Linux Documentation](https://chimera-linux.org/docs/))
-
+Please utilize the official [Chimera Linux Documentation](https://chimera-linux.org/docs/)
 
 ## Preparation
 
