@@ -386,7 +386,7 @@ Skip this if this is your first Chimera Linux instalaltion
 ```
 apk add nvme-cli parted cryptsetup-scripts btrfs-progs dosfstools xfsprogs e2fsprogs ntfs-3g f2fs-tools mdadm lvm2 networkmanager linux-lts linux-stable grub-x86_64-efi plasma-desktop openssh-dinit flatpak smartmontools ufw chromium firefox thunderbird libreoffice git btop fastfetch curl lynx neomutt vim bash bash-completion fish-shell zsh tmux btop qemu-guest-agent-dinit spice-vdagent-dinit
 ```
-Note: If the installation is done on AARCH664 the package ```grub-x86_64-efi``` needs to be substituded with ```grub-arm64-efi```.
+Note: If the installation is done on AARCH64 aka. ARM64 the package ```grub-x86_64-efi``` needs to be substituded with ```grub-arm64-efi```.
 ##### Install NetworkManager
 We use Network Manager for Network device configuration
 ```
@@ -507,7 +507,8 @@ update-initramfs -c -k all
 
 ##### Install GRUB
 
-Note: If the installation is done on AARCH664 the package ```grub-x86_64-efi``` needs to be substituded with ```grub-arm64-efi```
+Note: Note: If the installation is done on AARCH64 aka. ARM64 the package ```grub-x86_64-efi``` needs to be substituded with ```grub-arm64-efi```
+
 and the grub-install command is ```grub-install -v --target=amd64-efi --efi-directory=/boot```.
 ```
 apk add grub-x86_64-efi
