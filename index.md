@@ -514,7 +514,7 @@ update-initramfs -c -k all
 
 ##### Install GRUB
 
-Note: Note: If the installation is done on AARCH64 aka. ARM64 the package ```grub-x86_64-efi``` needs to be substituded with ```grub-arm64-efi```
+Note: If the installation is done on AARCH64 aka. ARM64 the package ```grub-x86_64-efi``` needs to be substituded with ```grub-arm64-efi```
 
 and the grub-install command is ```grub-install -v --target=amd64-efi --efi-directory=/boot```.
 ```
