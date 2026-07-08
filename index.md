@@ -406,6 +406,13 @@ dinitctl enable -o syslog-ng
 ```
 dinitctl enable -o sshd
 ```
+##### Install chronie
+
+```
+apk add cronie
+dinitctl enable -o crond
+```
+
 ##### Install Firewall
 ```
 apk add ufw
