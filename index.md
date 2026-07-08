@@ -406,7 +406,7 @@ dinitctl enable -o syslog-ng
 ```
 dinitctl enable -o sshd
 ```
-##### Install chronie
+##### Install cronie
 
 ```
 apk add cronie
