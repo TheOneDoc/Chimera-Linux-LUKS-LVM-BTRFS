@@ -559,7 +559,7 @@ dinitctl enable -o sddm
 apk add chromium firefox thunderbird libreoffice
 ```
 
-All done time to exit the chrot
+All done time to exit the chroot
 ```
 exit
 ````
