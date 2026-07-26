@@ -516,7 +516,7 @@ update-initramfs -c -k all
 
 Note: If the installation is done on AARCH64 aka. ARM64 the package ```grub-x86_64-efi``` needs to be substituded with ```grub-arm64-efi```
 
-and the grub-install command is ```grub-install -v --target=amd64-efi --efi-directory=/boot```.
+and the grub-install command is ```grub-install -v --target=arm64-efi --efi-directory=/boot```.
 ```
 apk add grub-x86_64-efi
 mount -o remount,rw /sys/firmware/efi/efivars
