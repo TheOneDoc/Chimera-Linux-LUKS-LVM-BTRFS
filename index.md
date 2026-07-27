@@ -569,3 +569,5 @@ And reboot the machine
 doas reboot
 ```
 ![The End Result](0023.png)
+
+_Disclaimer: This is no official Chimera Linux Documentation_
