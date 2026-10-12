@@ -384,7 +384,7 @@ This is a quick one-liner to install all needed packages.
 Please look at the individual sections for details.
 Skip this if this is your first Chimera Linux instalaltion
 ```
-apk add nvme-cli parted cryptsetup-scripts btrfs-progs dosfstools xfsprogs e2fsprogs ntfs-3g f2fs-tools mdadm lvm2 networkmanager linux-lts linux-stable grub-x86_64-efi plasma-desktop openssh-dinit flatpak smartmontools cronie ufw chromium firefox thunderbird libreoffice git btop fastfetch curl lynx neomutt vim bash bash-completion fish-shell zsh tmux btop qemu-guest-agent-dinit spice-vdagent-dinit
+apk add nvme-cli parted cryptsetup-scripts btrfs-progs dosfstools xfsprogs e2fsprogs ntfs-3g f2fs-tools mdadm lvm2 networkmanager linux-lts linux-stable grub-x86_64-efi plasma-desktop openssh-dinit flatpak smartmontools cronie ufw chromium firefox thunderbird libreoffice git btop fastfetch curl lynx neomutt vim-classic bash bash-completion fish-shell zsh tmux btop qemu-guest-agent-dinit spice-vdagent-dinit
 ```
 Note: If the installation is done on AARCH64 aka. ARM64 the package ```grub-x86_64-efi``` needs to be substituded with ```grub-arm64-efi```.
 ##### Install NetworkManager
@@ -537,7 +537,7 @@ apk add fastfetch
 apk add curl
 apk add lynx
 apk add neomutt
-apk add vim
+apk add vim-classic
 ```
 
 ##### (optional) QEMU/KVM VM guest agent services
